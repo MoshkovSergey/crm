@@ -1,6 +1,7 @@
 package main
 
-import "github.com/MoshkovSergey/crm/backend"
+import "crm/backend"
+
 func main() {
 	backend.Start()
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const dataFilePath = "./data/data.txt"
+const dataFilePath = "../data/data.txt"
 
 // ensureDataFileExists creates the data file if it does not exist or
 // opens it if it already exists. It also ensures the file contains an
