@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const dataFilePath = "../data/data.txt"
+const dataFilePath = "./data/data.txt"
 
 // ensureDataFileExists creates the data file if it does not exist or
 // opens it if it already exists. It also ensures the file contains an
@@ -123,13 +123,13 @@ func postData(w http.ResponseWriter, r *http.Request) {
 // - r: *http.Request - the client's request
 func homePage(w http.ResponseWriter, r *http.Request) {
 	// Open the "index.html" file in read-only mode.
-	indexFile, err := os.Open("../static/index.html")
+	indexFile, err := os.Open("./static/index.html")
 	if err != nil {
 		// If there was an error opening the file, log the error and send an internal server error response.
 		log.Fatal("file open on get", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, "Internal server error")
-		return
+		
 	}
 	defer indexFile.Close() // Close the file when the function returns.
 
@@ -137,7 +137,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, indexFile)
 
 	// Serve the file with the given file name, modification time, and content.
-	http.ServeContent(w, r, "index.html", time.Now(), indexFile)
+	// http.ServeContent(w, r, "index.html", time.Now(), indexFile)
 }
 
 
