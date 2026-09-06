@@ -50,8 +50,7 @@ func ensureDataFileExists() {
 	}
 }
 
-// getData handles GET requests for the /data endpoint. It opens the data file, sends its contents to the client,
-// and writes the client's request body to the data file.
+// getData handles GET requests for the /data endpoint. It opens the data file and sends its contents to the client.
 // Parameters:
 // - w: http.ResponseWriter - the response writer used to send the response to the client
 // - r: *http.Request - the client's request
@@ -60,7 +59,7 @@ func getData(w http.ResponseWriter, r *http.Request) {
 	dataFile, err := os.Open(dataFilePath)
 	if err != nil {
 		// If there was an error opening the file, log the error and send an internal server error response
-		log.Fatal("file open on get", err.Error())
+		log.Println("file open on get", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, "Internal server error")
 		return
@@ -69,16 +68,6 @@ func getData(w http.ResponseWriter, r *http.Request) {
 
 	// Send the data file's contents to the client
 	http.ServeContent(w, r, dataFilePath, time.Now(), dataFile)
-
-	// Write the client's request body to the data file
-	_, err = io.Copy(dataFile, r.Body)
-	if err != nil {
-		// If there was an error writing to the file, log the error and send an internal server error response
-		log.Fatal("copy from request", err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, "Internal server error")
-		return
-	}
 }
 
 
@@ -90,8 +79,8 @@ func getData(w http.ResponseWriter, r *http.Request) {
 func postData(w http.ResponseWriter, r *http.Request) {
 
 	// Open the data file in write-only mode and truncate the file.
-	// If the file doesn't exist, it will be created.
-	dataFile, err := os.OpenFile(dataFilePath, os.O_WRONLY|os.O_TRUNC, 0644)
+	// If the file doesn't exist, it will be created (os.O_CREATE).
+	dataFile, err := os.OpenFile(dataFilePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 
 	// If there was an error opening the file, log the error and send an internal server error response
 	if err != nil {
@@ -126,10 +115,10 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	indexFile, err := os.Open("./static/index.html")
 	if err != nil {
 		// If there was an error opening the file, log the error and send an internal server error response.
-		log.Fatal("file open on get", err.Error())
+		log.Println("file open on get", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, "Internal server error")
-		
+		return
 	}
 	defer indexFile.Close() // Close the file when the function returns.
 
